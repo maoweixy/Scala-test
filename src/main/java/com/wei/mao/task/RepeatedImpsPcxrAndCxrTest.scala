@@ -3,16 +3,16 @@ package com.wei.mao.task
 import com.tencent.tdw.spark.toolkit.tdw.TDWSQLProvider
 import inco.common.log_process.Common
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.{DataFrame, SQLContext, SparkSession}
 import org.apache.spark.sql.functions.{avg, col, sum}
 import org.apache.spark.sql.types.LongType
+import org.apache.spark.sql.{DataFrame, SparkSession}
 import org.apache.spark.{SparkConf, SparkContext}
 
 import java.text.SimpleDateFormat
 import java.util.{Calendar, TimeZone}
 import scala.collection.mutable.ListBuffer
 
-object RepeatedImpsPcxrAndCxr {
+object RepeatedImpsPcxrAndCxrTest {
   val sparkConf = new SparkConf().setAppName("testdemo")
   sparkConf.set("spark.hadoop.hadoop.job.ugi", "tdw_miraclemao:tdw_miraclemao")
   val sc = new SparkContext(sparkConf)
@@ -48,7 +48,7 @@ object RepeatedImpsPcxrAndCxr {
   def getCxr(ss: SparkSession, date: String, filedName: String): DataFrame = {
     val tdw = new TDWSQLProvider(ss, user = user, passwd = password, dbName = dbName)
     val dates = getDatesList(date, 3)
-    val date_list = dates.split(",").map(x => s"p_${x}").toSeq
+    val date_list = List("2021051100")
     tdw.table("t_ocpa_middle_table_d", date_list)
       .filter(s"process_date >= ${date} and process_date <= ${date} and " +
         s"site_set in (25) and smart_optimization_goal is not null and smart_optimization_goal > 0 and smart_optimization_goal != 7")
@@ -119,17 +119,17 @@ object RepeatedImpsPcxrAndCxr {
     val repeatedNum = cmdArgs.getOrElse("repeated_num", "3").toInt
     val filedName = cmdArgs.getOrElse("filed_name", "quality_product_id")
 
-    val inputPath = cmdArgs.getOrElse("inputPath", s"hdfs://ss-cdg-13-v2/data/PIG/CDG/g_sng_gdt_gdt_ranking/7days/miraclemao/test_task/pcxr/" + day)
-    val outputPath = cmdArgs.getOrElse("outputPath", s"hdfs://ss-cdg-13-v2/data/PIG/CDG/g_sng_gdt_gdt_ranking/7days/miraclemao/test_task/pcxr_and_cxr/" + day)
-    val cxrOutputPath = cmdArgs.getOrElse("cxrOutputPath", s"hdfs://ss-cdg-13-v2/data/PIG/CDG/g_sng_gdt_gdt_ranking/7days/miraclemao/test_task/cxr/" + day)
+//    val inputPath = cmdArgs.getOrElse("inputPath", s"hdfs://ss-cdg-13-v2/data/PIG/CDG/g_sng_gdt_gdt_ranking/7days/miraclemao/test_task/pcxr/" + day)
+//    val outputPath = cmdArgs.getOrElse("outputPath", s"hdfs://ss-cdg-13-v2/data/PIG/CDG/g_sng_gdt_gdt_ranking/7days/miraclemao/test_task/pcxr_and_cxr/" + day)
+    val cxrOutputPath = cmdArgs.getOrElse("cxrOutputPath", s"hdfs://ss-cdg-13-v2/data/PIG/CDG/g_sng_gdt_gdt_ranking/7days/miraclemao/test_task/cxr_test/" + day)
 
-    Common.deletePath(sc, outputPath)
+//    Common.deletePath(sc, outputPath)
     Common.deletePath(sc, cxrOutputPath)
 
     val cxr = getCxr(sparkSession, day, filedName)
-    val data = joinPcxrAndCxr(getPcxr(sc, inputPath), cxr, windowSize, repeatedNum).orderBy("order")
+//    val data = joinPcxrAndCxr(getPcxr(sc, inputPath), cxr, windowSize, repeatedNum).orderBy("order")
 
     cxr.repartition(1).write.option("header", true).csv(cxrOutputPath)
-    data.repartition(1).write.option("header", true).csv(outputPath)
+//    data.repartition(1).write.option("header", true).csv(outputPath)
   }
 }

@@ -1,17 +1,9 @@
 package com.wei.mao.task
 
-import com.google.protobuf.ByteString
-import inco.common.log_process.{Common, LogProcess}
-import org.apache.hadoop.fs.Path
-import org.apache.spark.broadcast.Broadcast
+import com.tencent.tdw.spark.toolkit.tdw.TDWProvider
+import inco.common.log_process.Common
 import org.apache.spark.rdd.RDD
 import org.apache.spark.{SparkConf, SparkContext}
-import org.apache.spark.storage.StorageLevel
-import scala.collection.JavaConversions.asScalaBuffer
-import scala.collection.mutable
-import scala.collection.mutable.ListBuffer
-import com.tencent.tdw.spark.toolkit.tdw.TDWProvider
-import java.text.SimpleDateFormat
 
 object PositionValueProfile {
   val dbName = "hlw_gdt"

@@ -1,10 +1,5 @@
 package com.wei.mao
 
-import org.json4s.JsonDSL.int2jvalue
-
-import scala.+:
-import scala.collection.{immutable, mutable}
-
 object ScalaDemo {
   def main(args: Array[String]): Unit = {
 

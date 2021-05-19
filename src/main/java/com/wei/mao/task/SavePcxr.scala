@@ -2,13 +2,11 @@ package com.wei.mao.task
 
 import com.gdt.dragon.DragonInputFormat
 import com.gdt.proto.GDTPageview.Pageview
-import com.tencent.tdw.spark.toolkit.tdw.TDWProvider
 import inco.common.log_process.Common
 import org.apache.hadoop.io.{BytesWritable, NullWritable}
 import org.apache.spark.rdd.RDD
 import org.apache.spark.{SparkConf, SparkContext}
-
-import scala.collection.JavaConversions.`deprecated asScalaBuffer`
+import scala.collection.JavaConversions.asScalaBuffer
 
 object  SavePcxr{
   // 18个字段
@@ -18,7 +16,8 @@ object  SavePcxr{
       .filter(pv => (pv.getPage.getSiteId == 70506421868294L || pv.getPage.getSiteId == 70702022115052L) && pv.getIdLocators.getQqOpenid.toStringUtf8.nonEmpty)
       .flatMap(pv =>
         pv.getPositionsList.flatMap(pos =>
-          pos.getImpsList.map(imp => {
+          pos.getImpsList.filter(imp => imp.getAd.getSmartOptimizer.getOptimizationGoal > 0 && imp.getAd.getSmartOptimizer.getOptimizationGoal != 7)
+            .map(imp => {
             val ad = imp.getAd
 
             val adCategorys = ad.getVerticalList.map(_.getId - 21474836480L).filter(_ >= 0)

@@ -4,8 +4,8 @@ import com.gdt.dragon.DragonInputFormat
 import com.gdt.proto.GDTPageview.Pageview
 import inco.common.log_process.Common
 import org.apache.hadoop.io.{BytesWritable, NullWritable}
-import org.apache.spark.{SparkConf, SparkContext}
 import org.apache.spark.rdd.RDD
+import org.apache.spark.{SparkConf, SparkContext}
 
 import scala.collection.JavaConversions.`deprecated asScalaBuffer`
 import scala.collection.mutable

@@ -1,10 +1,8 @@
 package com.wei.mao.task
 
-import com.tencent.tdw.spark.toolkit.tdw.{TDWProvider, TDWSQLProvider}
+import com.tencent.tdw.spark.toolkit.tdw.TDWProvider
 import inco.common.log_process.Common
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.SparkSession
-import org.apache.spark.sql.functions.sum
 import org.apache.spark.{SparkConf, SparkContext}
 
 import scala.collection.mutable
