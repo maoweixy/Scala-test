@@ -1,10 +1,11 @@
 package com.wei.mao.task
 
+
 import com.tencent.tdw.spark.toolkit.tdw.TDWSQLProvider
 import inco.common.log_process.Common
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.{DataFrame, SQLContext, SparkSession}
-import org.apache.spark.sql.functions.{avg, col, sum}
+import org.apache.spark.sql.functions.{avg, col, sum, abs}
 import org.apache.spark.sql.types.LongType
 import org.apache.spark.{SparkConf, SparkContext}
 
@@ -98,16 +99,18 @@ object RepeatedImpsPcxrAndCxr {
       }).toDF("filed_name", "pctr", "pcvr", "order")
 
 
-    RepeatedImpsPcxr.join(cxr, "filed_name")
-      .groupBy("order").agg(avg("pctr").as("pctr"),
-      avg("pcvr").as("pcvr"),
+    RepeatedImpsPcxr.groupBy("filed_name", "order").agg(avg("pctr").as("pctr"),
+      avg("pcvr").as("pcvr"))
+      .join(cxr, "filed_name")
+      .withColumn("ctr_bias", abs(col("pctr") / (col("click_cnt") / col("exposure_cnt")) - 1))
+      .withColumn("cvr_bias", abs(col("pcvr") / (col("active_cnt") / col("click_cnt")) - 1))
+      .groupBy("order").agg(avg("ctr_bias").as("ctr_bias"),
+      avg("cvr_bias").as("cvr_bias"),
       sum("exposure_cnt").as("exposure_cnt"),
       sum("click_cnt").as("click_cnt"),
       sum("active_cnt").as("active_cnt"))
-      .withColumn("ctr_bias", col("pctr") / (col("click_cnt") / col("exposure_cnt")) - 1)
-      .withColumn("cvr_bias", col("pcvr") / (col("active_cnt") / col("click_cnt")) - 1)
       //      .select("order", "ctr_bias", "cvr_bias")
-      .select("order", "ctr_bias", "cvr_bias", "pctr", "pcvr", "exposure_cnt", "click_cnt", "active_cnt")
+      .select("order", "ctr_bias", "cvr_bias", "exposure_cnt", "click_cnt", "active_cnt")
   }
 
 
